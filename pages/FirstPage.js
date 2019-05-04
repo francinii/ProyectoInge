@@ -92,7 +92,7 @@ export default class FirstPage extends Component {
 
   //Metodo para editar el contenido de card, la idea es hacerlo en un card
   editTask = i => {
-    alert("hola" + i);
+    alert(""+i);
   }
 
   componentDidMount() {
