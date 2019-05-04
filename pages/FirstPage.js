@@ -55,7 +55,7 @@ export default class FirstPage extends Component {
     text: "",
     date: fechaActual,
     deadline: fechaActual,
-    status: true,
+    status: false,
     modalVisible: false,
   };
 
@@ -74,7 +74,7 @@ export default class FirstPage extends Component {
     }
   };
 
-  cancel = () =>{
+  cancel = () => {
     this.setState({ text: "" });
     this.setState({ date: fechaActual });
     this.setState({ deadline: fechaActual });
@@ -92,7 +92,13 @@ export default class FirstPage extends Component {
 
   //Metodo para editar el contenido de card, la idea es hacerlo en un card
   editTask = i => {
-    alert(""+i);
+    alert("" + i);
+  }
+
+  changeStatus(i, estado) {
+    status = !estado;
+    db.ref('/tareas').child(i).child("status").setValue(status);
+    this.setState({ status: false });
   }
 
   componentDidMount() {
@@ -105,7 +111,7 @@ export default class FirstPage extends Component {
     });
   }
 
-  
+
 
   render() {
     return (
@@ -117,7 +123,7 @@ export default class FirstPage extends Component {
             <View style={styles.eventBox}>
               <View style={styles.eventContent}>
                 <View style={styles.card_header}>
-                  <CheckBox style={styles.card_done} color="#87B56A" checked={this.state.estado} />
+                  <CheckBox style={styles.card_done} color="#87B56A" checked={item.status} onPress={() => this.changeStatus(this.state.keys[index], item.status)} />
                   <Text style={styles.card_title}></Text>
                   <TouchableOpacity style={styles.card_delete} onPress={() => this.deleteTask(this.state.keys[index], index)}  >
                     <Image source={require('./../images/delete.png')} style={styles.delete_button} />
@@ -203,7 +209,7 @@ export default class FirstPage extends Component {
                     marginLeft: 36
                   }
                 }}
-                onDateChange={(date) => { this.setState({ date: deadline }) }}
+                onDateChange={(deadline) => { this.setState({ deadline: deadline }) }}
               //Podemos cambiar esto para que 
               //se guarde al darle al btn gurardar
               />
@@ -211,7 +217,7 @@ export default class FirstPage extends Component {
               <Text>Description:</Text>
               <TextInput
 
-                onChangeText={this.changeTextHandler}             
+                onChangeText={this.changeTextHandler}
                 value={this.state.text}
                 placeholder="Add Task"
                 returnKeyType="done"
