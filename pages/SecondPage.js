@@ -30,8 +30,8 @@ componentDidMount() {
       let data = snapshot.val();
       let keys = Object.keys(data);
       let tasks = Object.values(data);
-      this.setState({ tasks:tasks });
-      this.setState({ keys: keys });
+    //  this.setState({ tasks:tasks });
+    //  this.setState({ keys: keys });
       tasks.forEach(element => {
         var diaSinFormato=element.date.split('/');       
         if(diaSinFormato[0].length == 1){          
