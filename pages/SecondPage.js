@@ -9,21 +9,46 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View,Alert} from 'react-native';
 import {CalendarList} from 'react-native-calendars'
+import { db } from '../config'; // base de datos
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
     'Bienvenido a TODO TODO',
 });
 var markedDays={};
-type Props = {};
-export default class App extends Component<Props> {
-  constructor(props) {
-    super(props);
-    this.state = {   markedDates:{}  };
-    this.onDayPress = this.onDayPress.bind(this);
-    this.pressOK;
-  }
+
+export default class App extends Component  {
+ 
+    state = {  
+       markedDates:{}  
+      };
   
+componentDidMount() {  
+    db.ref('/tareas').on('value', snapshot => {
+      markedDays={};
+      let data = snapshot.val();
+      let keys = Object.keys(data);
+      let tasks = Object.values(data);
+      this.setState({ tasks });
+      this.setState({ keys: keys });
+      this.state.tasks.forEach(element => {
+        var diaSinFormato=element.date.split('/');       
+        if(diaSinFormato[0].length == 1){          
+          diaSinFormato[0]= '0'+diaSinFormato[0];
+        }
+        if(diaSinFormato[1].length == 1){          
+          diaSinFormato[1]= '0'+diaSinFormato[1];
+        }
+        var day=diaSinFormato[2]+"-"+diaSinFormato[1]+"-"+diaSinFormato[0];
+        markedDays[day]={marked:true};        
+      });
+      const markedDates2 = Object.assign({}, markedDays) 
+      this.setState({
+       markedDates: markedDates2,    
+      });  
+      console.log(this.state.markedDates);
+    });   
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -71,11 +96,13 @@ export default class App extends Component<Props> {
   }
   pressOK(day){
     markedDays[day.dateString]={marked:true};
-    console.log(markedDays);
+    //console.log(markedDays);
+    
     const markedDates2 = Object.assign({}, markedDays) 
     this.setState({
         markedDates: markedDates2,    
-    });   
+    });  
+  
   }
 }
 

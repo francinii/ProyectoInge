@@ -38,7 +38,7 @@ const fechaActual = dia + '/' + mes + '/' + anio;
 let addItem = item => {
   db.ref('/tareas').push({
     date: item.date,
-    deadline: item.date,
+    deadline: item.deadline,
     description: item.text,
     status: item.status
   });
@@ -63,7 +63,7 @@ export default class FirstPage extends Component {
   //Agregar una nota rapida
   changeTextHandler = text => {
     this.setState({ text: text });
-  };
+  };dddddddddddddddddddddddddddddddddddddddddddfffffffffffffrre44444444444444444444q1111111111111111111111111111111111111
 
   //Agregar una tarea rápida
   addTask = () => {
@@ -108,7 +108,7 @@ export default class FirstPage extends Component {
       let tasks = Object.values(data);
       this.setState({ tasks });
       this.setState({ keys: keys });
-    });
+      });    
   }
 
 
