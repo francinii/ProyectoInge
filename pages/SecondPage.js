@@ -20,7 +20,8 @@ var markedDays={};
 export default class App extends Component  {
  
     state = {  
-       markedDates:{}  
+       markedDates:{},
+      
       };
   
 componentDidMount() {  
@@ -29,9 +30,9 @@ componentDidMount() {
       let data = snapshot.val();
       let keys = Object.keys(data);
       let tasks = Object.values(data);
-      this.setState({ tasks });
+      this.setState({ tasks:tasks });
       this.setState({ keys: keys });
-      this.state.tasks.forEach(element => {
+      tasks.forEach(element => {
         var diaSinFormato=element.date.split('/');       
         if(diaSinFormato[0].length == 1){          
           diaSinFormato[0]= '0'+diaSinFormato[0];
