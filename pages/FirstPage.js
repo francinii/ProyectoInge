@@ -15,92 +15,97 @@ import {
   Platform,
   CheckBox,
   TouchableOpacity,
-
-
+  AlertAndroid,
 } from "react-native";
+import DatePicker from 'react-native-datepicker';
+
+import { db } from '../config'; // base de datos
+
+
 
 
 const isAndroid = Platform.OS == "android";
 const viewPadding = 10;
 
+//Fecha actual
+const dia = new Date().getDate();
+const mes = new Date().getMonth() + 1;
+const anio = new Date().getFullYear();
+const fechaActual = dia + '/' + mes + '/' + anio;
+
+
+//Agrega una tarea nueva
+let addItem = item => {
+  db.ref('/tareas').push({
+    date: item.date,
+    deadline: item.date,
+    description: item.text,
+    status: item.status
+  });
+};
+
+
 export default class FirstPage extends Component {
+
+
+  //Estado actual de la tarea
   state = {
     tasks: [],
+    keys: [],
     text: "",
-    date: "00/00/0000",
-    deadline: "00/00/0000",
-    estado: true
+    date: fechaActual,
+    deadline: fechaActual,
+    status: true,
+    modalVisible: false,
   };
 
+
+  //Agregar una nota rapida
   changeTextHandler = text => {
     this.setState({ text: text });
   };
-
 
   //Agregar una tarea rápida
   addTask = () => {
     let notEmpty = this.state.text.trim().length > 0;
     if (notEmpty) {
-      this.setState(
-        prevState => {
-          let { tasks, text, date, deadline } = prevState;
-          return {
-            tasks: tasks.concat(
-              {
-                key: tasks.length,
-                text: text,
-                date: date,
-                deadline: deadline
-              }
-            ),
-            text: ""
-          };
-        },
-        () => Tasks.save(this.state.tasks)
-      );
+      addItem(this.state); //agregmos una tarea a firebase   
+      this.setState({ modalVisible: false });
     }
   };
 
+  cancel = () =>{
+    this.setState({ text: "" });
+    this.setState({ date: fechaActual });
+    this.setState({ deadline: fechaActual });
+    this.setModalVisible(!this.state.modalVisible);
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
+  }
 
   //Elimina el card seleccionado
-  deleteTask = i => {
-    this.setState(
-      prevState => {
-        let tasks = prevState.tasks.slice();
-
-        tasks.splice(i, 1);
-
-        return { tasks: tasks };
-      },
-      () => Tasks.save(this.state.tasks)
-    );
+  deleteTask(key, index) {
+    db.ref('/tareas').child(key).remove();
   };
 
   //Metodo para editar el contenido de card, la idea es hacerlo en un card
   editTask = i => {
-    alert("hola");
+    alert("hola" + i);
   }
-
-
-
-
 
   componentDidMount() {
-    Keyboard.addListener(
-      isAndroid ? "keyboardDidShow" : "keyboardWillShow",
-      e => this.setState({ viewPadding: e.endCoordinates.height + viewPadding })
-    );
-
-    Keyboard.addListener(
-      isAndroid ? "keyboardDidHide" : "keyboardWillHide",
-      () => this.setState({ viewPadding: viewPadding })
-    );
-
-    Tasks.all(tasks => this.setState({ tasks: tasks || [] }));
+    db.ref('/tareas').on('value', snapshot => {
+      let data = snapshot.val();
+      let keys = Object.keys(data);
+      let tasks = Object.values(data);
+      this.setState({ tasks });
+      this.setState({ keys: keys });
+    });
   }
 
-
-
+  
 
   render() {
     return (
@@ -114,27 +119,24 @@ export default class FirstPage extends Component {
                 <View style={styles.card_header}>
                   <CheckBox style={styles.card_done} color="#87B56A" checked={this.state.estado} />
                   <Text style={styles.card_title}></Text>
-                 <TouchableOpacity style={styles.card_delete} onPress={() => this.deleteTask(index)}  >
+                  <TouchableOpacity style={styles.card_delete} onPress={() => this.deleteTask(this.state.keys[index], index)}  >
                     <Image source={require('./../images/delete.png')} style={styles.delete_button} />
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.card_event} onPress={() => this.editTask(index)}>
+                <TouchableOpacity style={styles.card_event} onPress={() => this.editTask(this.state.keys[index])}>
                   <View style={styles.card_header} >
                     <Text style={styles.eventTime}>Date: {item.date}</Text>
                     <Text style={styles.card_title}></Text>
                     <Text style={styles.eventTime}>Deadline: {item.deadline}</Text>
                   </View>
                   <Text style={styles.description}>Description:</Text>
-                  <Text style={styles.description}>{item.text}</Text>
+                  <Text style={styles.description}>{item.description}</Text>
                 </TouchableOpacity>
-
               </View>
             </View>
           }
         />
-
-
         <TextInput
           style={styles.textInput}
           onChangeText={this.changeTextHandler}
@@ -144,37 +146,113 @@ export default class FirstPage extends Component {
           returnKeyType="done"
           returnKeyLabel="done"
         />
-
-
-        <TouchableOpacity activeOpacity={0.5} onPress={this.editTask} style={styles.TouchableOpacityStyle} >
+        <TouchableOpacity activeOpacity={0.5} onPress={() => { this.setModalVisible(true); }} style={styles.TouchableOpacityStyle} >
           <Image source={require('./../images/add1.png')} style={styles.FloatingButtonStyle} />
         </TouchableOpacity>
 
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => { Alert.alert('Modal has been closed.'); }}>
+          <View style={{ marginTop: 22 }}>
+            <View>
+              <Text>Date:</Text>
+              <DatePicker
+                style={{ width: 200 }}
+                date={this.state.date} //initial date from state
+                mode="date" //The enum of date, datetime and time
+                placeholder="select date"
+                format="DD/MM/YYYY"
+                minDate={this.fechaActual}//Ejemplo "01-01-2019"                
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    position: 'absolute',
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0
+                  },
+                  dateInput: {
+                    marginLeft: 36
+                  }
+                }}
+                onDateChange={(date) => { this.setState({ date: date }) }}
+              />
+
+              <Text>Deadline:</Text>
+              <DatePicker
+                style={{ width: 200 }}
+                date={this.state.deadline} //initial date from state
+                mode="date" //The enum of date, datetime and time
+                placeholder="select date"
+                format="DD/MM/YYYY"
+                minDate={this.fechaActual}//Ejemplo "01-01-2019" 
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    position: 'absolute',
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0
+                  },
+                  dateInput: {
+                    marginLeft: 36
+                  }
+                }}
+                onDateChange={(date) => { this.setState({ date: deadline }) }}
+              //Podemos cambiar esto para que 
+              //se guarde al darle al btn gurardar
+              />
+
+              <Text>Description:</Text>
+              <TextInput
+
+                onChangeText={this.changeTextHandler}             
+                value={this.state.text}
+                placeholder="Add Task"
+                returnKeyType="done"
+                returnKeyLabel="done"
+              />
+
+
+
+              <Button
+                onPress={this.addTask}
+                title="Save"
+                color="#841584"
+                accessibilityLabel="Save"
+              />
+
+              <Button
+                onPress={this.cancel}
+                title="Cancel"
+                color="#841584"
+                accessibilityLabel="Save"
+              />
+
+            </View>
+          </View>
+        </Modal>
+
+
+
       </View>
+
+      //INicio del MODAL
+
+
+
+      // Fin del MODAL
     );
   }
 }
 
-let Tasks = {
-  convertToArrayOfObject(tasks, callback) {
-    return callback(
-      tasks ? tasks.split("||").map((task, i) => ({ key: i, text: task })) : []
-    );
-  },
-  convertToStringWithSeparators(tasks) {
-    return tasks.map(task => task.text).join("||");
-  },
-  all(callback) {
-    return AsyncStorage.getItem("TASKS", (err, tasks) =>
-      this.convertToArrayOfObject(tasks, callback)
-    );
-  },
-  save(tasks) {
-    AsyncStorage.setItem("TASKS", this.convertToStringWithSeparators(tasks));
-  }
-};
 
-
+//''''''''''''''''''''''''''''''''''''''''''''''''''Estilos '''''''''''''''''''''''''''''''''''''''''''''''
 //Estilos de los componentes
 const styles = StyleSheet.create({
   container: {
@@ -242,7 +320,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
-
   card_header: {
     flexDirection: "row",
     width: "100%",
@@ -271,11 +348,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  delete_button:{
+  delete_button: {
     height: 20,
     width: 20,
   },
-
 
   TouchableOpacityStyle: {
     position: 'absolute',
@@ -286,12 +362,12 @@ const styles = StyleSheet.create({
     right: 30,
     bottom: 30,
   },
+
   FloatingButtonStyle: {
     resizeMode: 'contain',
     width: 50,
     height: 50,
   },
-
 
   TouchableOpacityStyle: {
     position: 'absolute',
@@ -302,17 +378,11 @@ const styles = StyleSheet.create({
     right: 20,
     bottom: 10,
   },
+
   FloatingButtonStyle: {
     resizeMode: 'contain',
     width: 50,
     height: 50,
   },
 
-
-
-
-
-
 });
-
-AppRegistry.registerComponent("TodoList", () => TodoList);

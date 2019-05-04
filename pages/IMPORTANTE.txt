@@ -1,0 +1,14 @@
+correr en la consola de node
+
+npm install firebase --save
+npm add firebase
+
+
+Para el data picker de la ventana de agegar	
+
+npm install react-native-datepicker --save
+
+
+
+Para ir a otra activity
+npm install --save react-navigation
