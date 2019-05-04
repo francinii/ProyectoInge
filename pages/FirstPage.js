@@ -38,7 +38,7 @@ const fechaActual = dia + '/' + mes + '/' + anio;
 let addItem = item => {
   db.ref('/tareas').push({
     date: item.date,
-    deadline: item.date,
+    deadline: item.deadline,
     description: item.text,
     status: item.status
   });
