@@ -12,3 +12,7 @@ npm install react-native-datepicker --save
 
 Para ir a otra activity
 npm install --save react-navigation
+
+
+Para debugear en android
+ADB shell input keyevent 82
