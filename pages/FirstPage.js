@@ -1,21 +1,18 @@
 import React, { Component } from "react";
-import {
-  AppRegistry,
+import { 
   StyleSheet,
   Text,
   View,
   FlatList,
-  AsyncStorage,
   Button,
   Alert,
   Image,
   Modal,
-  TextInput,
-  Keyboard,
+  TextInput, 
   Platform,
   CheckBox,
   TouchableOpacity,
-  AlertAndroid,
+  
 } from "react-native";
 import DatePicker from 'react-native-datepicker';
 
@@ -108,6 +105,7 @@ export default class FirstPage extends Component {
       let tasks = Object.values(data);
       this.setState({ tasks });
       this.setState({ keys: keys });
+      console.log(tasks);
       });    
   }
 
