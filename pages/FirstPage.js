@@ -140,6 +140,7 @@ export default class FirstPage extends Component {
               </View>
             </View>
           }
+          keyExtractor={(item, index) => index.toString()}
         />
         <TextInput
           style={styles.textInput}
