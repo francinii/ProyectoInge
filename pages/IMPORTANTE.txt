@@ -16,3 +16,7 @@ npm install --save react-navigation
 
 Para debugear en android
 ADB shell input keyevent 82
+
+
+modal 
+npm install --save react-native-modal
