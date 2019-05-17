@@ -55,6 +55,7 @@ export default class FirstPage extends Component {
     deadline: fechaActual,
     status: false,
     modalVisible: false,
+    item: null
   };
 
   
@@ -69,6 +70,10 @@ export default class FirstPage extends Component {
       date: date,
       deadline: deadline
      });
+  };
+
+  itemHandler = (item) => {
+    this.setState({ item: item });
   };
 
   //Agregar una tarea rápida
@@ -99,10 +104,26 @@ export default class FirstPage extends Component {
     db.ref('/tareas').child(key).remove();
   };
 
+
   //Metodo para editar el contenido de card, la idea es hacerlo en un card
-  editTask = i => {
-    console.log(i);
-    alert("" + i);
+  edit = (key, item) => {
+    this.state.text = item.description;
+    this.itemHandler(key);
+    this.setModalVisible(true);
+    console.log(key);
+    // alert("" + item);
+  }
+
+  editTask = item => {
+    key = this.state.keys[item];
+    console.log(key);
+      db.ref('/tareas').child(key).update({
+        date: item.date,
+        deadline: item.deadline,
+        description: item.text,
+        status: item.status
+    });
+    this.setState({ modalVisible: false });
   }
 
   changeStatus(i, estado) {
@@ -141,7 +162,7 @@ export default class FirstPage extends Component {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.card_event} onPress={() => this.editTask(this.state.keys[index])}>
+                <TouchableOpacity style={styles.card_event} onPress={() => this.edit(this.state.keys[index], index)}>
                   <View style={styles.card_header} >
                     <Text style={styles.eventTime}>Date: {item.date}</Text>
                     <Text style={styles.card_title}></Text>
@@ -175,7 +196,9 @@ export default class FirstPage extends Component {
           dateHandler={this.dateHandler} 
           text={this.state.text} 
           textHandler={this.changeTextHandler}
+          item={this.state.item}
           save={this.addTask}
+          update={this.editTask}
           cancel={this.cancel}/>
 
       </View>
