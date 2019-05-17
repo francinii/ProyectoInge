@@ -9,12 +9,8 @@ class TaskView extends Component{
     super(props);
     }
 
-
-    // changeTextHandler = text => {
-    //   this.setState({ text: text });
-    // };
-
     render() {
+      let haveItem = this.props.item;
       return(
         <Modal
           animationType="slide"
@@ -82,13 +78,23 @@ class TaskView extends Component{
                 returnKeyLabel="done"
               />
 
+              {haveItem ? (
+                <Button
+                  onPress={this.props.update}
+                  title="Update"
+                  color="#841584"
+                  accessibilityLabel="Update"
+                />
+                    ) : (
+                  <Button
+                      onPress={this.props.save}
+                      title="Save"
+                      color="#841584"
+                      accessibilityLabel="Save"
+                    />
+                )}
 
-              <Button
-                onPress={this.props.save}
-                title="Save"
-                color="#841584"
-                accessibilityLabel="Save"
-              />
+              
 
               <Button
                 onPress={this.props.cancel}
