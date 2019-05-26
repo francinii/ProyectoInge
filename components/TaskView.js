@@ -10,7 +10,7 @@ class TaskView extends Component{
     }
 
     render() {
-      let haveItem = this.props.item;
+      let haveItem = !!this.props.item;
       return(
         <Modal
           animationType="slide"
