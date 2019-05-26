@@ -7,14 +7,15 @@ import {
   Button,
   Alert,
   Image,
-  Modal,
   TextInput, 
   Platform,
   CheckBox,
   TouchableOpacity,
   
 } from "react-native";
-import DatePicker from 'react-native-datepicker';
+
+import TaskView from '../components/TaskView';
+
 
 import { db } from '../config'; // base de datos
 
@@ -49,32 +50,51 @@ export default class FirstPage extends Component {
   state = {
     tasks: [],
     keys: [],
-    text: "",
+    // text: "",
     date: fechaActual,
     deadline: fechaActual,
     status: false,
     modalVisible: false,
+    item: null
   };
 
+  
 
   //Agregar una nota rapida
-  changeTextHandler = text => {
+  changeTextHandler = (text) => {
     this.setState({ text: text });
-  };dddddddddddddddddddddddddddddddddddddddddddfffffffffffffrre44444444444444444444q1111111111111111111111111111111111111
+  };
+
+  dateHandler = (date, deadline) => {
+    this.setState({ 
+      date: date,
+      deadline: deadline
+     });
+  };
+
+  indexHandler = (index) => {
+    this.setState({ index: index });
+  };
+
+  itemHandler = (item) => {
+    this.setState({ item: item });
+  };
 
   //Agregar una tarea rápida
   addTask = () => {
-    let notEmpty = this.state.text.trim().length > 0;
-    if (notEmpty) {
+    let notEmpty = this.state.text;
+    if (notEmpty != "") {
       addItem(this.state); //agregmos una tarea a firebase   
       this.setState({ modalVisible: false });
     }
   };
 
   cancel = () => {
-    this.setState({ text: "" });
-    this.setState({ date: fechaActual });
-    this.setState({ deadline: fechaActual });
+    this.setState({ 
+      text: "",
+      date: fechaActual,
+      deadline: fechaActual,
+     });
     this.setModalVisible(!this.state.modalVisible);
   }
 
@@ -87,9 +107,26 @@ export default class FirstPage extends Component {
     db.ref('/tareas').child(key).remove();
   };
 
-  //Metodo para editar el contenido de card, la idea es hacerlo en un card
-  editTask = i => {
-    alert("" + i);
+
+  //Metodo para editar el contenido de card
+  edit = (item, index) => {
+    this.state.text = item.description;
+    this.indexHandler(index);
+    this.itemHandler(item);
+    this.setModalVisible(true);
+  }
+
+  editTask = () => {
+    item = this.state.item;
+    index = this.state.index;
+    key = this.state.keys[index];
+
+    db.ref('/tareas').child(key).update({
+        'date': this.state.date,
+        'deadline': this.state.deadline,
+        'description': this.state.text
+    });
+    this.setState({ modalVisible: false });
   }
 
   changeStatus(i, estado) {
@@ -103,9 +140,11 @@ export default class FirstPage extends Component {
       let data = snapshot.val();
       let keys = Object.keys(data);
       let tasks = Object.values(data);
-      this.setState({ tasks });
-      this.setState({ keys: keys });
-      console.log(tasks);
+      this.setState({
+                    data: data,
+                    tasks: tasks,
+                    keys: keys
+                    })
       });    
   }
 
@@ -128,7 +167,7 @@ export default class FirstPage extends Component {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.card_event} onPress={() => this.editTask(this.state.keys[index])}>
+                <TouchableOpacity style={styles.card_event} onPress={() => this.edit(item, index)}>
                   <View style={styles.card_header} >
                     <Text style={styles.eventTime}>Date: {item.date}</Text>
                     <Text style={styles.card_title}></Text>
@@ -140,6 +179,7 @@ export default class FirstPage extends Component {
               </View>
             </View>
           }
+          keyExtractor={(item, index) => index.toString()}
         />
         <TextInput
           style={styles.textInput}
@@ -154,95 +194,17 @@ export default class FirstPage extends Component {
           <Image source={require('./../images/add1.png')} style={styles.FloatingButtonStyle} />
         </TouchableOpacity>
 
-
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => { Alert.alert('Modal has been closed.'); }}>
-          <View style={{ marginTop: 22 }}>
-            <View>
-              <Text>Date:</Text>
-              <DatePicker
-                style={{ width: 200 }}
-                date={this.state.date} //initial date from state
-                mode="date" //The enum of date, datetime and time
-                placeholder="select date"
-                format="DD/MM/YYYY"
-                minDate={this.fechaActual}//Ejemplo "01-01-2019"                
-                confirmBtnText="Confirm"
-                cancelBtnText="Cancel"
-                customStyles={{
-                  dateIcon: {
-                    position: 'absolute',
-                    left: 0,
-                    top: 4,
-                    marginLeft: 0
-                  },
-                  dateInput: {
-                    marginLeft: 36
-                  }
-                }}
-                onDateChange={(date) => { this.setState({ date: date }) }}
-              />
-
-              <Text>Deadline:</Text>
-              <DatePicker
-                style={{ width: 200 }}
-                date={this.state.deadline} //initial date from state
-                mode="date" //The enum of date, datetime and time
-                placeholder="select date"
-                format="DD/MM/YYYY"
-                minDate={this.fechaActual}//Ejemplo "01-01-2019" 
-                confirmBtnText="Confirm"
-                cancelBtnText="Cancel"
-                customStyles={{
-                  dateIcon: {
-                    position: 'absolute',
-                    left: 0,
-                    top: 4,
-                    marginLeft: 0
-                  },
-                  dateInput: {
-                    marginLeft: 36
-                  }
-                }}
-                onDateChange={(deadline) => { this.setState({ deadline: deadline }) }}
-              //Podemos cambiar esto para que 
-              //se guarde al darle al btn gurardar
-              />
-
-              <Text>Description:</Text>
-              <TextInput
-
-                onChangeText={this.changeTextHandler}
-                value={this.state.text}
-                placeholder="Add Task"
-                returnKeyType="done"
-                returnKeyLabel="done"
-              />
-
-
-
-              <Button
-                onPress={this.addTask}
-                title="Save"
-                color="#841584"
-                accessibilityLabel="Save"
-              />
-
-              <Button
-                onPress={this.cancel}
-                title="Cancel"
-                color="#841584"
-                accessibilityLabel="Save"
-              />
-
-            </View>
-          </View>
-        </Modal>
-
-
+        <TaskView 
+          modalVisible={this.state.modalVisible} 
+          actualDate={this.state.date}
+          deadline={this.state.deadline}
+          dateHandler={this.dateHandler} 
+          text={this.state.text} 
+          textHandler={this.changeTextHandler}
+          item={this.state.item}
+          save={this.addTask}
+          update={this.editTask}
+          cancel={this.cancel}/>
 
       </View>
 

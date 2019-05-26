@@ -19,6 +19,9 @@ import Guardando from './pages/FirstPage';
 //we can directly export the TabNavigator also but header will not be visible
 //as header comes only when we put anything into StackNavigator and then export
 
+// Remove warning
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings(['ViewPagerAndroid']);
 
 
 const TabScreen = createMaterialTopTabNavigator(
