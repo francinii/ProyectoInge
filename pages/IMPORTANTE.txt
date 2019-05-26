@@ -1,0 +1,22 @@
+correr en la consola de node
+
+npm install firebase --save
+npm add firebase
+
+
+Para el data picker de la ventana de agegar	
+
+npm install react-native-datepicker --save
+
+
+
+Para ir a otra activity
+npm install --save react-navigation
+
+
+Para debugear en android
+ADB shell input keyevent 82
+
+
+modal 
+npm install --save react-native-modal
