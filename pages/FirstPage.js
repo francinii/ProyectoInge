@@ -72,13 +72,16 @@ export default class FirstPage extends Component {
      });
   };
 
+  indexHandler = (index) => {
+    this.setState({ index: index });
+  };
+
   itemHandler = (item) => {
     this.setState({ item: item });
   };
 
   //Agregar una tarea rápida
   addTask = () => {
-    console.log("add");
     let notEmpty = this.state.text;
     if (notEmpty != "") {
       addItem(this.state); //agregmos una tarea a firebase   
@@ -105,23 +108,23 @@ export default class FirstPage extends Component {
   };
 
 
-  //Metodo para editar el contenido de card, la idea es hacerlo en un card
-  edit = (key, item) => {
+  //Metodo para editar el contenido de card
+  edit = (item, index) => {
     this.state.text = item.description;
-    this.itemHandler(key);
+    this.indexHandler(index);
+    this.itemHandler(item);
     this.setModalVisible(true);
-    console.log(key);
-    // alert("" + item);
   }
 
-  editTask = item => {
-    key = this.state.keys[item];
-    console.log(key);
-      db.ref('/tareas').child(key).update({
-        date: item.date,
-        deadline: item.deadline,
-        description: item.text,
-        status: item.status
+  editTask = () => {
+    item = this.state.item;
+    index = this.state.index;
+    key = this.state.keys[index];
+
+    db.ref('/tareas').child(key).update({
+        'date': this.state.date,
+        'deadline': this.state.deadline,
+        'description': this.state.text
     });
     this.setState({ modalVisible: false });
   }
@@ -137,9 +140,11 @@ export default class FirstPage extends Component {
       let data = snapshot.val();
       let keys = Object.keys(data);
       let tasks = Object.values(data);
-      this.setState({ tasks });
-      this.setState({ keys: keys });
-      console.log(tasks);
+      this.setState({
+                    data: data,
+                    tasks: tasks,
+                    keys: keys
+                    })
       });    
   }
 
@@ -162,7 +167,7 @@ export default class FirstPage extends Component {
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.card_event} onPress={() => this.edit(this.state.keys[index], index)}>
+                <TouchableOpacity style={styles.card_event} onPress={() => this.edit(item, index)}>
                   <View style={styles.card_header} >
                     <Text style={styles.eventTime}>Date: {item.date}</Text>
                     <Text style={styles.card_title}></Text>
