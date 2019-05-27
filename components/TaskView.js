@@ -64,7 +64,7 @@ class TaskView extends Component{
                     marginLeft: 36
                   }
                 }}
-                onDateChange={this.props.dateHandler}
+                onDateChange={this.props.deadlineHandler}
               //Podemos cambiar esto para que 
               //se guarde al darle al btn gurardar
               />

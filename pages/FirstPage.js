@@ -66,9 +66,14 @@ export default class FirstPage extends Component {
     this.setState({ text: text });
   };
 
-  dateHandler = (date, deadline) => {
+  dateHandler = (date) => {
     this.setState({ 
-      date: date,
+      date: date
+     });
+  };
+
+  deadlineHandler = (deadline) => {
+    this.setState({ 
       deadline: deadline
      });
   };
@@ -212,7 +217,8 @@ export default class FirstPage extends Component {
           modalVisible={this.state.modalVisible} 
           actualDate={this.state.date}
           deadline={this.state.deadline}
-          dateHandler={this.dateHandler} 
+          dateHandler={this.dateHandler}
+          deadlineHandler={this.deadlineHandler} 
           text={this.state.text} 
           textHandler={this.changeTextHandler}
           item={this.state.item}
