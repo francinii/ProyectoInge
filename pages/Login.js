@@ -13,6 +13,7 @@ class Login extends React.Component {
     const { email, password } = this.state;
     fire.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
+        
               this.props.navigation.navigate('Home');
       })
       .catch((error) => {

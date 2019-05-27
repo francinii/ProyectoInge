@@ -16,9 +16,9 @@ const App = (props) => {
 
   function cerrarSesion() {
     fire.auth().signOut().then(function () {
-      this.props.navigation.navigate('Login')
+      this.props.navigation.navigate('Acceder')
     }).catch(function (error) {
-      Alert.alert('No se ha podido cerrar sesion');
+     //Alert.alert('No se ha podido cerrar sesion');
     });
   }
 
