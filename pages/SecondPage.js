@@ -9,7 +9,7 @@
 import React, { Component } from 'react';
 import { Platform, FlatList, StyleSheet, Text, View, Alert, Button, TouchableOpacity } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
-import Modal2 from "react-native-modal";
+import Modal from "react-native-modal";
 import CheckBox from 'react-native-check-box'
 import { db } from '../config'; // base de datos
 
@@ -87,7 +87,7 @@ export default class App extends Component {
             this.state.markedDates
           }
         />
-        <Modal2
+        <Modal
           isVisible={this.state.isModalVisible}>
           <View style={{ backgroundColor: '#d3d3d3', flex: 0.8 }}>
             <View style={{ flex: 0.8, padding: 1 }}>
@@ -125,7 +125,7 @@ export default class App extends Component {
               </View>
             </View>
           </View>
-        </Modal2>
+        </Modal>
       </View >
     );
   }
