@@ -20,7 +20,6 @@ const App = (props) => {
     }).catch(function (error) {
       Alert.alert('No se ha podido cerrar sesion');
     });
-
   }
 
 
