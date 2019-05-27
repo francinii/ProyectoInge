@@ -9,13 +9,12 @@ import {
   Image,
   Modal,
   TextInput, 
-  Platform,
-  CheckBox,
+  Platform,  
   TouchableOpacity,
   
 } from "react-native";
 import DatePicker from 'react-native-datepicker';
-
+import CheckBox from 'react-native-check-box'
 
 
 import { db } from '../config'; // base de datos
@@ -43,12 +42,25 @@ let addItem = item => {
     currentUser: item.currentUser.email
   });
 };
-
+let editItem = item => {
+  item.key
+  console.log('/tareas/' + item.key + "/");
+  db.ref('/tareas/' + item.key + "/").update({
+    date: item.date,
+    deadline: item.deadline,
+    description: item.text,
+    status: item.status
+  });
+};
 
 export default class FirstPage extends Component {
+  constructor(props) {
+    super(props);
+  }
 
   //Estado actual de la tarea
   state = {
+
     tasks: [],
     keys: [],
     text: "",
@@ -56,7 +68,9 @@ export default class FirstPage extends Component {
     deadline: fechaActual,
     status: false,
     modalVisible: false,
-    currentUser: null,
+    currentUser: null,    
+    ModalTitle: "Add To Do",
+    key: null,
   };
 
 
@@ -64,26 +78,35 @@ export default class FirstPage extends Component {
   changeTextHandler = text => {
     this.setState({ text: text });
   };
+
   //Agregar una tarea rápida
-  addTask = () => {
+  SaveTask = () => {
     let notEmpty = this.state.text.trim().length > 0;
     if (notEmpty) {
-      addItem(this.state); //agregmos una tarea a firebase   
+      if (this.state.ModalTitle == "Add To Do") {
+        addItem(this.state); //agregmos una tarea a firebase 
+      } else {
+        editItem(this.state);
+      }
+      this.setState({ text: "" });
       this.setState({ modalVisible: false });
-      
     }
   };
 
+  addTaksModal = () => {
+
+    this.setState({ ModalTitle: "Add To Do" });
+    this.setState({ modalVisible: true });
+
+  }
   cancel = () => {
+    console.log("cancelar");
     this.setState({ text: "" });
     this.setState({ date: fechaActual });
     this.setState({ deadline: fechaActual });
-    this.setModalVisible(!this.state.modalVisible);
+    this.setState({ modalVisible: false });
   }
 
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-  }
 
   //Elimina el card seleccionado
   deleteTask(key, index) {
@@ -91,19 +114,28 @@ export default class FirstPage extends Component {
   };
 
   //Metodo para editar el contenido de card, la idea es hacerlo en un card
-  editTask = i => {
-    alert("" + i);
+  editTask = (i, item) => {
+    this.setState({ key: i });
+    this.setState({ ModalTitle: "Edit To Do" });
+    this.setState({ text: item.description });
+    this.setState({ date: item.date });
+    this.setState({ deadline: item.deadline });
+    this.setState({ modalVisible: true });
+
+
   }
 
   changeStatus(i, estado) {
     status = !estado;
-    db.ref('/tareas').child(i).child("status").setValue(status);
-    this.setState({ status: false });
+db.ref('/tareas/' + i + "/").update({
+  status: status
+});
   }
 
   componentDidMount() {
     const { currentUser } = fire.auth()
     this.setState({ currentUser })
+    
     db.ref('/tareas').on('value', snapshot => {
       let data = snapshot.val();
       let keys = Object.keys(data);
@@ -129,21 +161,23 @@ export default class FirstPage extends Component {
             <View style={styles.eventBox}>
               <View style={styles.eventContent}>
                 <View style={styles.card_header}>
-                  <CheckBox style={styles.card_done} color="#87B56A" checked={item.status} onPress={() => this.changeStatus(this.state.keys[index], item.status)} />
+                  <CheckBox style={styles.card_done} checkedCheckBoxColor="#87B56A" onClick={() => {
+                    this.changeStatus(this.state.keys[index], item.status)
+                  }} isChecked={item.status} />
                   <Text style={styles.card_title}></Text>
                   <TouchableOpacity style={styles.card_delete} onPress={() => this.deleteTask(this.state.keys[index], index)}  >
                     <Image source={require('./../images/delete.png')} style={styles.delete_button} />
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.card_event} onPress={() => this.editTask(this.state.keys[index])}>
+                <TouchableOpacity style={styles.card_event} onPress={() => this.editTask(this.state.keys[index], item)}>
                   <View style={styles.card_header} >
                     <Text style={styles.eventTime}>Date: {item.date}</Text>
                     <Text style={styles.card_title}></Text>
                     <Text style={styles.eventTime}>Deadline: {item.deadline}</Text>
                   </View>
                   <Text style={styles.description}>Description:</Text>
-                  <Text style={styles.description}>{item.description}</Text>
+                  <Text multiline={true} numberOfLines={4} style={styles.description}>{item.description}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -158,18 +192,19 @@ export default class FirstPage extends Component {
           returnKeyType="done"
           returnKeyLabel="done"
         />
-        <TouchableOpacity activeOpacity={0.5} onPress={() => { this.setModalVisible(true); }} style={styles.TouchableOpacityStyle} >
+        <TouchableOpacity activeOpacity={0.5} onPress={() => { this.addTaksModal() }} style={styles.TouchableOpacityStyle} >
           <Image source={require('./../images/add1.png')} style={styles.FloatingButtonStyle} />
         </TouchableOpacity>
 
 
         <Modal
           animationType="slide"
-          transparent={false}
+
           visible={this.state.modalVisible}
           onRequestClose={() => { Alert.alert('Modal has been closed.'); }}>
-          <View style={{ marginTop: 22 }}>
-            <View>
+          <View style={{ backgroundColor: '#f2f2f2', flex: 0.6 }}>
+            <View style={{ backgroundColor: '#f2f2f2', flex: 0.9, padding: 1 }}>
+              <Text style={styles.welcome}>{this.state.ModalTitle} </Text>
               <Text>Date:</Text>
               <DatePicker
                 style={{ width: 200 }}
@@ -222,36 +257,36 @@ export default class FirstPage extends Component {
 
               <Text>Description:</Text>
               <TextInput
-
+                style={{ backgroundColor: '#d3d3d3' }}
+                multiline={true}
+                numberOfLines={4}
                 onChangeText={this.changeTextHandler}
                 value={this.state.text}
                 placeholder="Add Task"
                 returnKeyType="done"
                 returnKeyLabel="done"
               />
-
-
-
-              <Button
-                onPress={this.addTask}
-                title="Save"
-                color="#841584"
-                accessibilityLabel="Save"
-              />
-
-              <Button
-                onPress={this.cancel}
-                title="Cancel"
-                color="#841584"
-                accessibilityLabel="Save"
-              />
+              <View style={{ margin: "1%" }}>
+                <Button
+                  onPress={this.SaveTask}
+                  title="Save"
+                  color="#87B56A"
+                  accessibilityLabel="Save"
+                />
+              </View>
+              <View style={{ margin: "1%" }}>
+                <Button
+                  onPress={this.cancel}
+                  title="Cancel"
+                  color="#ff4040"
+                  accessibilityLabel="Cancel"
+                />
+              </View>
 
             </View>
+
           </View>
         </Modal>
-
-
-
       </View>
 
       //INicio del MODAL
@@ -380,7 +415,11 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
   TouchableOpacityStyle: {
     position: 'absolute',
     width: 50,

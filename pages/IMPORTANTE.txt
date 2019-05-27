@@ -28,3 +28,5 @@ npm add react-navigation
 
 //menu de contexto
 npm install react-native-enhanced-popup-menu --save
+checkbok
+npm i react-native-check-box --save
