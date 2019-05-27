@@ -11,4 +11,5 @@ let config = {
 };
 // Initialize Firebase
 let app = firebase.initializeApp(config);
+export const fire = firebase;
 export const db = app.database();  

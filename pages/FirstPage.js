@@ -19,7 +19,7 @@ import DatePicker from 'react-native-datepicker';
 
 
 import { db } from '../config'; // base de datos
-
+import { fire } from '../config';
 
 //hola esto es una prueba
 
@@ -39,13 +39,13 @@ let addItem = item => {
     date: item.date,
     deadline: item.deadline,
     description: item.text,
-    status: item.status
+    status: item.status,
+    currentUser: item.currentUser.email
   });
 };
 
 
 export default class FirstPage extends Component {
-
 
   //Estado actual de la tarea
   state = {
@@ -56,6 +56,7 @@ export default class FirstPage extends Component {
     deadline: fechaActual,
     status: false,
     modalVisible: false,
+    currentUser: null,
   };
 
 
@@ -69,6 +70,7 @@ export default class FirstPage extends Component {
     if (notEmpty) {
       addItem(this.state); //agregmos una tarea a firebase   
       this.setState({ modalVisible: false });
+      
     }
   };
 
@@ -100,6 +102,8 @@ export default class FirstPage extends Component {
   }
 
   componentDidMount() {
+    const { currentUser } = fire.auth()
+    this.setState({ currentUser })
     db.ref('/tareas').on('value', snapshot => {
       let data = snapshot.val();
       let keys = Object.keys(data);
@@ -107,7 +111,10 @@ export default class FirstPage extends Component {
       this.setState({ tasks });
       this.setState({ keys: keys });
       console.log(tasks);
-      });    
+      });   
+      Alert.alert(currentUser.email+"");
+      
+
   }
 
 
