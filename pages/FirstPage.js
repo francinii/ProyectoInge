@@ -31,33 +31,34 @@ const mes = new Date().getMonth() + 1;
 const anio = new Date().getFullYear();
 const fechaActual = dia + '/' + mes + '/' + anio;
 
-
-//Agrega una tarea nueva
-let addItem = item => {
-  db.ref('/tareas').push({
-    date: item.date,
-    deadline: item.deadline,
-    description: item.text,
-    status: item.status
-  });
+const initialState = {
+  tasks: [],
+  keys: [],
+  date: fechaActual,
+  deadline: fechaActual,
+  status: false,
+  modalVisible: false,
+  item: null
 };
+
+
 
 
 export default class FirstPage extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = initialState;
+  }
 
-  //Estado actual de la tarea
-  state = {
-    tasks: [],
-    keys: [],
-    // text: "",
-    date: fechaActual,
-    deadline: fechaActual,
-    status: false,
-    modalVisible: false,
-    item: null
-  };
+  
 
+  resetState = () => {
+    this.dateHandler(fechaActual, fechaActual);
+    this.changeTextHandler(null);
+    this.itemHandler(null);
+    this.indexHandler(null);
+  }
   
 
   //Agregar una nota rapida
@@ -80,12 +81,23 @@ export default class FirstPage extends Component {
     this.setState({ item: item });
   };
 
+  //Agrega una tarea nueva
+  addItem = item => {
+    db.ref('/tareas').push({
+      date: item.date,
+      deadline: item.deadline,
+      description: item.text,
+      status: item.status
+    });
+  };
+
   //Agregar una tarea rápida
   addTask = () => {
     let notEmpty = this.state.text;
     if (notEmpty != "") {
-      addItem(this.state); //agregmos una tarea a firebase   
+      this.addItem(this.state); //agregmos una tarea a firebase   
       this.setState({ modalVisible: false });
+      this.resetState();
     }
   };
 
@@ -96,6 +108,7 @@ export default class FirstPage extends Component {
       deadline: fechaActual,
      });
     this.setModalVisible(!this.state.modalVisible);
+    this.resetState();
   }
 
   setModalVisible(visible) {
@@ -127,6 +140,7 @@ export default class FirstPage extends Component {
         'description': this.state.text
     });
     this.setState({ modalVisible: false });
+    this.resetState();
   }
 
   changeStatus(i, estado) {
