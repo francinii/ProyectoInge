@@ -20,11 +20,14 @@ import Guardando from './pages/FirstPage';
 //as header comes only when we put anything into StackNavigator and then export
 
 
-
+var  variables={
+  text:'hola'
+};
 const TabScreen = createMaterialTopTabNavigator(
   {
-    To_Do: { screen: Guardando },
-    Calendar: { screen: SecondPage },
+   
+    To_Do: {  screen: Guardando },
+    Calendar: { screen: SecondPage},    
   },
   {
     tabBarPosition: 'top',
@@ -50,11 +53,10 @@ const TabScreen = createMaterialTopTabNavigator(
 
 
 //making a StackNavigator to export as default
-const App = createStackNavigator(
- 
+const App = createStackNavigator( 
   {
     TabScreen: {
-      screen: TabScreen,
+      screen: TabScreen,     
       navigationOptions: {
         headerStyle: {
           backgroundColor: '#454545',
@@ -63,6 +65,7 @@ const App = createStackNavigator(
         title: 'To do To do',
       },
     },
+    
   },
 );
 

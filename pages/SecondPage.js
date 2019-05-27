@@ -9,7 +9,8 @@
 import React, { Component } from 'react';
 import { Platform, FlatList, StyleSheet, Text, View, Alert, Button, TouchableOpacity } from 'react-native';
 import { CalendarList } from 'react-native-calendars';
-import Modal from "react-native-modal";
+import Modal2 from "react-native-modal";
+import CheckBox from 'react-native-check-box'
 import { db } from '../config'; // base de datos
 
 const instructions = Platform.select({
@@ -20,13 +21,17 @@ const instructions = Platform.select({
 var markedDays = {};
 var listTasks = [];
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+  }
 
   state = {
+    string: "hola",
     markedDates: {},
     Marcadostasks: [],
     isModalVisible: false,
     keys: [],
-    FechaMarcada:"",
+    FechaMarcada: "",
   };
 
   componentDidMount() {
@@ -55,15 +60,13 @@ export default class App extends Component {
       this.setState({
         markedDates: markedDates2,
       });
-
-
     });
   }
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}> TO DO TO DO!</Text>
         <Text style={styles.welcome}>Calendario</Text>
+        <Text style={styles.welcome}> Tareas</Text>
         <CalendarList
           // Callback which gets executed when visible months change in scroll view. Default = undefined
 
@@ -84,25 +87,26 @@ export default class App extends Component {
             this.state.markedDates
           }
         />
-        <Modal
+        <Modal2
           isVisible={this.state.isModalVisible}>
           <View style={{ backgroundColor: '#d3d3d3', flex: 0.8 }}>
             <View style={{ flex: 0.8, padding: 1 }}>
-            <Text style={styles.welcome}>
-               {this.state.FechaMarcada}
-            </Text>
+              <Text style={styles.welcome}>
+                {this.state.FechaMarcada}
+              </Text>
               <FlatList style={styles.list}
                 data={this.state.Marcadostasks}
                 renderItem={({ item, index }) =>
                   <View style={styles.eventBox}>
                     <View style={styles.eventContent}>
                       <View style={styles.card_header}>
+                        <CheckBox style={styles.card_done} checkedCheckBoxColor="#87B56A" disabled="true" isChecked={item.status} />
                         <Text style={styles.card_title}></Text>
                       </View>
                       <TouchableOpacity style={styles.card_event} >
                         <View style={styles.card_header} >
-                        <Text style={styles.eventTime}>Deadline: {item.deadline}</Text>                          
-                          <Text style={styles.card_title}></Text>                          
+                          <Text style={styles.eventTime}>Deadline: {item.deadline}</Text>
+                          <Text style={styles.card_title}></Text>
                         </View>
                         <Text style={styles.description}>Description:</Text>
                         <Text style={styles.description}>{item.description}</Text>
@@ -121,7 +125,7 @@ export default class App extends Component {
               </View>
             </View>
           </View>
-        </Modal>
+        </Modal2>
       </View >
     );
   }
@@ -131,27 +135,28 @@ export default class App extends Component {
   };
 
   onDayPress(day) {
+
     var ListaMarcada = new Array();
     var diaSinFormato;
-    var dia ;
+    var dia;
     this.setState({ isModalVisible: !this.state.isModalVisible });
     listTasks.forEach(element => {
-       diaSinFormato = element.date.split('/');
+      diaSinFormato = element.date.split('/');
       if (diaSinFormato[0].length == 1) {
         diaSinFormato[0] = '0' + diaSinFormato[0];
       }
       if (diaSinFormato[1].length == 1) {
         diaSinFormato[1] = '0' + diaSinFormato[1];
       }
-       dia = diaSinFormato[2] + "-" + diaSinFormato[1] + "-" + diaSinFormato[0];
+      dia = diaSinFormato[2] + "-" + diaSinFormato[1] + "-" + diaSinFormato[0];
       if (day.dateString == dia) {
         console.log("true");
         ListaMarcada.push(element);
       }
-      diaSinFormato=day.dateString.split('-');
+      diaSinFormato = day.dateString.split('-');
       dia = diaSinFormato[2] + "-" + diaSinFormato[1] + "-" + diaSinFormato[0];
     });
-    this.setState({ FechaMarcada: "Fecha: "+dia});
+    this.setState({ FechaMarcada: "Fecha: " + dia });
     this.setState({ Marcadostasks: ListaMarcada });
   }
 
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF'    
+    backgroundColor: '#F5FCFF'
   },
 
   welcome: {
