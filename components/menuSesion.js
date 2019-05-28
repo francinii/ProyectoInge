@@ -26,15 +26,18 @@ const App = (props) => {
   return (
     <View style={{ flex: 1, alignItems: "flex-end", backgroundColor: "" }}>
 
+
+      <TouchableOpacity activeOpacity={0.5} onPress={onPress} >
+        <Image source={require('./../images/dots.png')} style={styles.dots} />
+      </TouchableOpacity>
+
+
       <Text
         ref={textRef}
         style={{ fontSize: 1, textAlign: "right" }}
       >
       </Text>
 
-      <TouchableOpacity activeOpacity={0.5} onPress={onPress} >
-        <Image source={require('./../images/dots.png')} style={styles.dots} />
-      </TouchableOpacity>
       <Menu
         ref={setMenuRef}
       >
@@ -50,8 +53,8 @@ export default App;
 
 const styles = StyleSheet.create({
   dots: {
-    height: 30,
-    width: 30,
+    height: 20,
+    width: 20,
   },
 
 });
