@@ -144,29 +144,8 @@ export default class FirstPage extends Component {
   }
 
 
-  filtrando = () => {
-    Alert.alert('Entre al filtrando');
-  }
-
-
-  componentDidMount() {
-    const { currentUser } = fire.auth()
-    this.setState({ currentUser })
-
-    db.ref('/Filtro/estado').on('value', snapshot => {
-      let estado = snapshot.val();
-      let est = Object.values(estado) + '';
-      this.setState({ filtroActual: est });
-
-      db.ref('/tareas').on('value', snapshot => {
-        data = snapshot.val();
-        keys = Object.keys(data);
-        tasks = Object.values(data);
-        this.setState({ tasks });
-        this.setState({ keys: keys });
-      });
-
-      filtra = this.state.filtroActual;
+  filtrando(){
+    filtra = this.state.filtroActual;
       if (filtra == 'All') {
 
       } else if (filtra == 'To do') {
@@ -240,6 +219,32 @@ export default class FirstPage extends Component {
         this.setState({ tasks: tareas });
         this.setState({ keys: llaves });
       }
+  }
+
+
+  componentDidMount() {
+    const { currentUser } = fire.auth()
+    this.setState({ currentUser })
+    db.ref('/tareas').on('value', snapshot => {
+      Alert.alert("indicador");
+     //this.filtrando();
+
+    });
+
+    db.ref('/Filtro/estado').on('value', snapshot => {
+      Alert.alert("Indicador filtro");
+      let estado = snapshot.val();
+      let est = Object.values(estado) + '';
+      this.setState({ filtroActual: est });
+      db.ref('/tareas').on('value', snapshot => {
+        data = snapshot.val();
+        keys = Object.keys(data);
+        tasks = Object.values(data);
+        this.setState({ tasks });
+        this.setState({ keys: keys });
+      });
+      this.filtrando();
+     
     });
     //////////////////////////////////////////////////////
 
