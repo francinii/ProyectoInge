@@ -227,7 +227,7 @@ export default class FirstPage extends Component {
   //  });
 
     db.ref('/Filtro/estado').on('value', snapshot => {
-      Alert.alert("Indicador filtro");
+      //Alert.alert("Indicador filtro");
       let estado = snapshot.val();
       let est = Object.values(estado) + '';
       this.setState({ filtroActual: est });
