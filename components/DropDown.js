@@ -10,6 +10,9 @@ export default class Example extends Component {
       data:[],
 
     }
+    db.ref('/Filtro/estado/').update({
+      seleccionado: 'All'
+      });
   }
   filtrar = (text) =>{
 
@@ -46,7 +49,7 @@ export default class Example extends Component {
         selectedItemColor='rgba(77,77,77, 77)'
         disabledItemColor='rgba(77,77,77, 77)'
         data={data}
-      
+        value={'All'}
         onChangeText={(text) => this.filtrar(text)}
         rippleInsets={{ top: 0, bottom: 0, left: 0, right: 0 }}
         dropdownPosition={1}

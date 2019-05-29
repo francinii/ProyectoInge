@@ -15,10 +15,11 @@ import {
 } from "react-native";
 import DatePicker from 'react-native-datepicker';
 import CheckBox from 'react-native-check-box'
-
+import PushNotification from 'react-native-push-notification';
 
 import { db } from '../config'; // base de datos
 import { fire } from '../config';
+
 
 //hola esto es una prueba
 
@@ -40,7 +41,7 @@ if (mes < 10) {
 
 const anio = new Date().getFullYear();
 const fechaActual = dia1 + '/' + mes1 + '/' + anio;
-
+var Notificar=false;
 
 //Agrega una tarea nueva
 let addItem = item => {
@@ -113,10 +114,15 @@ export default class FirstPage extends Component {
   cancel = () => {
     
     this.setState({ text: "",date: fechaActual,deadline: fechaActual,modalVisible: false,ModalTitle: "Add To Do"  });
-  
+    
   }
 
-
+  sendNotification() {
+    PushNotification.localNotification({
+      message: 'Remember that you has To Do to do'
+    });
+    Notificar=false;
+  };
   //Elimina el card seleccionado
   deleteTask(key, index) {
     db.ref('/tareas').child(key).remove();
@@ -139,106 +145,107 @@ export default class FirstPage extends Component {
   }
 
 
-  filtrando(){
+  filtrando(tasks,keys){
+    tareas = [];
+    llaves = [];
+    cont=0;
     filtra = this.state.filtroActual;
       if (filtra == 'All') {
-
-      } else if (filtra == 'To do') {
-        tareas = [];
-        llaves = [];
-        this.state.tasks.forEach(element => {
-          if (!element.status) {
+        tasks.forEach(element => {                   
+          if ( element.currentUser==this.state.currentUser.email) {  
+            if(element.date == fechaActual && !element.status ){
+              Notificar=true
+            }          
             tareas.push(element);
+            llaves.push(keys[cont]);
           }
+          cont++;
         });
-        this.state.keys.forEach(element => {
-          if (!element.status) {
-            llaves.push(element);
+             
+      } else if (filtra == 'To do') {        
+        tasks.forEach(element => { 
+          if (!element.status && element.currentUser==this.state.currentUser.email) {
+            if(element.date == fechaActual && !element.status ){
+              Notificar=true
+            }              
+            tareas.push(element);
+            llaves.push(keys[cont]);
           }
+          cont++;
         });
-        this.setState({ tasks: tareas });
-        this.setState({ keys: llaves });
+        
       }
-      else if (filtra == 'Done') {
-        tareas = [];
-        llaves = [];
-        this.state.tasks.forEach(element => {
-          if (element.status) {
+      else if (filtra == 'Done') {        
+        tasks.forEach(element => {
+          if (element.status && element.currentUser==this.state.currentUser.email) {
+            if(element.date == fechaActual && !element.status ){
+              Notificar=true
+            }   
             tareas.push(element);
+            llaves.push(keys[cont]);
           }
+          cont++;
         });
-        this.state.keys.forEach(element => {
-          if (element.status) {
-            llaves.push(element);
-          }
-        });
-        this.setState({ tasks: tareas });
-        this.setState({ keys: llaves });
+        
       }
       //////////////Flitrar por fecha actual/////////////////////////
       else if (filtra == 'Today') {
-        tareas = [];
-        llaves = [];
-        this.state.tasks.forEach(element => {
-          if (element.date == fechaActual) {
+        
+        tasks.forEach(element => {
+          if (element.date == fechaActual && element.currentUser==this.state.currentUser.email) {
+            if(element.date == fechaActual && !element.status ){
+              Notificar=true
+            }  
             tareas.push(element);
+            llaves.push(keys[cont]);
           }
+          cont++;
         });
-        this.state.keys.forEach(element => {
-          if (element.date == fechaActual) {
-            llaves.push(element);
-          }
-        });
-        this.setState({ tasks: tareas });
-        this.setState({ keys: llaves });
+        
       }
       ///////////////////////////////////
       //Filtrar por este mes
-      else if (filtra == 'This Month') {
-        tareas = [];
-        llaves = [];
-        this.state.tasks.forEach(element => {
+      else if (filtra == 'This Month') {       
+        tasks.forEach(element => {
           mes2 = element.date + "";
           mes2 = mes2.substr(3, 2);
-          if (mes2 == mes1) {
+          if (mes2 == mes1 && element.currentUser==this.state.currentUser.email) {
+            if(element.date == fechaActual && !element.status ){
+              Notificar=true
+            }  
             tareas.push(element);
+            llaves.push(keys[cont]);
           }
+          cont++;
         });
-        this.state.keys.forEach(element => {
-          mes2 = element.date + "";
-          mes2 = mes2.substr(3, 2);
-          if (mes2 == mes1) {
-            llaves.push(element);
-          }
-        });
-        this.setState({ tasks: tareas });
-        this.setState({ keys: llaves });
+        
       }
+      if(Notificar){
+        this.sendNotification();
+      }
+      this.setState({ tasks: tareas });
+      this.setState({ keys: llaves });
   }
 
 
   componentDidMount() {
     const { currentUser } = fire.auth()
     this.setState({ currentUser })
-  //  db.ref('/tareas').on('value', snapshot => {
-   //   Alert.alert("indicador");
-     //this.filtrando();
-
-  //  });
 
     db.ref('/Filtro/estado').on('value', snapshot => {
       //Alert.alert("Indicador filtro");
+      //console.log("entre aqui estados")
       let estado = snapshot.val();
       let est = Object.values(estado) + '';
       this.setState({ filtroActual: est });
       db.ref('/tareas').on('value', snapshot => {
+       // console.log("entre aqui 1")
         data = snapshot.val();
         keys = Object.keys(data);
         tasks = Object.values(data);
-        this.setState({ tasks });
-        this.setState({ keys: keys });
+        this.filtrando(tasks,keys);
       });
-      this.filtrando();
+      
      
     });
     //////////////////////////////////////////////////////

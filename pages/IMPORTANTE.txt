@@ -34,3 +34,6 @@ npm i react-native-check-box --save
 
 
 npm install react-native-material-dropdown
+
+npm install --save react-native-push-notification
+react-native link

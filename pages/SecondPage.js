@@ -138,7 +138,7 @@ export default class App extends Component {
   onDayPress(day) {
     ListaMarcada = new Array();
 
-    this.DaysMarked(this.state.tasks, day.dateString,this.state.keys);
+    this.DaysMarked(this.state.tasks, day.dateString, this.state.keys);
     var diaSinFormato;
     var dia;
     diaSinFormato = day.dateString.split('-');
@@ -146,12 +146,12 @@ export default class App extends Component {
     this.setState({ Marcadostasks: ListaMarcada, FechaMarcada: dia, isModalVisible: true, dayMarked: day.dateString });
   }
 
-  DaysMarked = (tasks, day,keys) => {
+  DaysMarked = (tasks, day, keys) => {
     ListaMarcada = new Array();
     KeysMarcada = new Array();
     var diaSinFormato;
     var dia;
-    var i=0;
+    var i = 0;
     tasks.forEach(element => {
 
       diaSinFormato = element.date.split('/');
@@ -166,7 +166,7 @@ export default class App extends Component {
         KeysMarcada.push(keys[i]);
         ListaMarcada.push(element);
       }
-     i++;
+      i++;
     });
   }
   componentDidMount() {
@@ -177,22 +177,23 @@ export default class App extends Component {
       let keys = Object.keys(data);
       let listTasks = Object.values(data);
       listTasks.forEach(element => {
-
-        var diaSinFormato = element.date.split('/');
-        if (diaSinFormato[0].length == 1) {
-          diaSinFormato[0] = '0' + diaSinFormato[0];
-        }
-        if (diaSinFormato[1].length == 1) {
-          diaSinFormato[1] = '0' + diaSinFormato[1];
-        }
-        var day = diaSinFormato[2] + "-" + diaSinFormato[1] + "-" + diaSinFormato[0];
-        markedDays[day] = { marked: true, descripcion: element.description, fechaFin: element.deadline };
-        console.log(element);
+        if (element.currentUser==currentUser.email) {
+          var diaSinFormato = element.date.split('/');
+          if (diaSinFormato[0].length == 1) {
+            diaSinFormato[0] = '0' + diaSinFormato[0];
+          }
+          if (diaSinFormato[1].length == 1) {
+            diaSinFormato[1] = '0' + diaSinFormato[1];
+          }
+          var day = diaSinFormato[2] + "-" + diaSinFormato[1] + "-" + diaSinFormato[0];
+          markedDays[day] = { marked: true, descripcion: element.description, fechaFin: element.deadline };
+          //console.log(element);
+       }
       });
 
       const markedDates2 = Object.assign({}, markedDays)
       if (this.state.dayMarked != '') {
-        this.DaysMarked(listTasks, this.state.dayMarked,keys);
+        this.DaysMarked(listTasks, this.state.dayMarked, keys);
       }
       this.setState({
         markedDates: markedDates2, tasks: listTasks, keys: keys, currentUser: currentUser, Marcadostasks: ListaMarcada
@@ -203,8 +204,7 @@ export default class App extends Component {
     console.disableYellowBox = true;
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Calendario</Text>
-        <Text style={styles.welcome}> Tareas</Text>
+
         <CalendarList
           // Callback which gets executed when visible months change in scroll view. Default = undefined
 
@@ -230,7 +230,7 @@ export default class App extends Component {
           <View style={{ backgroundColor: '#d3d3d3', flex: 0.8 }}>
             <View style={{ flex: 0.8, padding: 1 }}>
               <Text style={styles.welcome}>
-                Fecha: {this.state.FechaMarcada}
+                Date: {this.state.FechaMarcada}
               </Text>
               <FlatList style={styles.list}
                 data={this.state.Marcadostasks}
@@ -261,10 +261,10 @@ export default class App extends Component {
             </View>
             <View style={{ flex: 0.2, justifyContent: 'flex-end', marginBottom: "1%", margin: "1%" }}>
               <View style={{ margin: "1%" }}>
-                <Button color="#87B56A" title="Agregar" onPress={this.addTaksModal} />
+                <Button color="#87B56A" title="Add" onPress={this.addTaksModal} />
               </View>
               <View style={{ margin: "1%" }}>
-                <Button color="#ff4040" title="Cerrar" onPress={this.Cerrar} />
+                <Button color="#ff4040" title="Cancel" onPress={this.Cerrar} />
               </View>
             </View>
           </View>
