@@ -220,19 +220,6 @@ export default class FirstPage extends Component {
   componentDidMount() {
     const { currentUser } = fire.auth()
     this.setState({ currentUser })
-<<<<<<< HEAD
-    
-    db.ref('/tareas').on('value', snapshot => {
-      let data = snapshot.val();
-      let keys = Object.keys(data);
-      let tasks = Object.values(data);
-      this.setState({ tasks });
-      this.setState({ keys: keys });
-      
-      });   
-      
-
-=======
   //  db.ref('/tareas').on('value', snapshot => {
    //   Alert.alert("indicador");
      //this.filtrando();
@@ -269,7 +256,6 @@ export default class FirstPage extends Component {
     //    }
     //  });
     // Alert.alert(currentUser.email + "");
->>>>>>> 9e3e73e965b6966698bcb3ec4b47231c2d095599
   }
 
 
