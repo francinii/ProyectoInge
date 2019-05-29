@@ -225,11 +225,11 @@ export default class FirstPage extends Component {
   componentDidMount() {
     const { currentUser } = fire.auth()
     this.setState({ currentUser })
-    db.ref('/tareas').on('value', snapshot => {
-      Alert.alert("indicador");
+  //  db.ref('/tareas').on('value', snapshot => {
+   //   Alert.alert("indicador");
      //this.filtrando();
 
-    });
+  //  });
 
     db.ref('/Filtro/estado').on('value', snapshot => {
       Alert.alert("Indicador filtro");
