@@ -322,7 +322,7 @@ export default class FirstPage extends Component {
           <View style={{ backgroundColor: '#f2f2f2', flex: 0.6 }}>
             <View style={{ backgroundColor: '#f2f2f2', flex: 0.9, padding: 1 }}>
               <Text style={styles.welcome}>{this.state.ModalTitle} </Text>
-              <Text style={{ fontSize: 17 }}>Date:</Text>
+              <Text >Date:</Text>
               <DatePicker
                 style={{ width: "100%" }}
                 date={this.state.date} //initial date from state
@@ -347,7 +347,7 @@ export default class FirstPage extends Component {
                 onDateChange={(date) => { this.setState({ date: date }) }}
               />
 
-              <Text style={{ fontSize: 17 }}>Deadline:</Text>
+              <Text >Deadline:</Text>
               <DatePicker
                 style={{ width: "100%" }}
                 date={this.state.deadline} //initial date from state
@@ -374,7 +374,7 @@ export default class FirstPage extends Component {
               //se guarde al darle al btn gurardar
               />
 
-              <Text style={{ fontSize: 17,  }}>Description:</Text>
+              <Text >Description:</Text>
               <TextInput
                 style={{ backgroundColor: "#f2f2f2" }}
                 multiline={true}
