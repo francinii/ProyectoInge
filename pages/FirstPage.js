@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { 
+import {
   StyleSheet,
   Text,
   View,
@@ -8,10 +8,10 @@ import {
   Alert,
   Image,
   Modal,
-  TextInput, 
-  Platform,  
+  TextInput,
+  Platform,
   TouchableOpacity,
-  
+
 } from "react-native";
 import DatePicker from 'react-native-datepicker';
 import CheckBox from 'react-native-check-box'
@@ -27,9 +27,19 @@ const viewPadding = 10;
 
 //Fecha actual
 const dia = new Date().getDate();
+dia1 = dia + "";
+if (dia < 10) {
+  dia1 = '0' + dia;
+}
+
 const mes = new Date().getMonth() + 1;
+mes1 = mes + "";
+if (mes < 10) {
+  mes1 = '0' + mes;
+}
+
 const anio = new Date().getFullYear();
-const fechaActual = dia + '/' + mes + '/' + anio;
+const fechaActual = dia1 + '/' + mes1 + '/' + anio;
 
 
 //Agrega una tarea nueva
@@ -68,9 +78,10 @@ export default class FirstPage extends Component {
     deadline: fechaActual,
     status: false,
     modalVisible: false,
-    currentUser: null,    
+    currentUser: null,
     ModalTitle: "Add To Do",
     key: null,
+    filtroActual: 'All'
   };
 
 
@@ -122,14 +133,94 @@ export default class FirstPage extends Component {
 
   changeStatus(i, estado) {
     status = !estado;
-db.ref('/tareas/' + i + "/").update({
-  status: status
-});
+    db.ref('/tareas/' + i + "/").update({
+      status: status
+    });
   }
+
+
+  filtrando(){
+    filtra = this.state.filtroActual;
+      if (filtra == 'All') {
+
+      } else if (filtra == 'To do') {
+        tareas = [];
+        llaves = [];
+        this.state.tasks.forEach(element => {
+          if (!element.status) {
+            tareas.push(element);
+          }
+        });
+        this.state.keys.forEach(element => {
+          if (!element.status) {
+            llaves.push(element);
+          }
+        });
+        this.setState({ tasks: tareas });
+        this.setState({ keys: llaves });
+      }
+      else if (filtra == 'Done') {
+        tareas = [];
+        llaves = [];
+        this.state.tasks.forEach(element => {
+          if (element.status) {
+            tareas.push(element);
+          }
+        });
+        this.state.keys.forEach(element => {
+          if (element.status) {
+            llaves.push(element);
+          }
+        });
+        this.setState({ tasks: tareas });
+        this.setState({ keys: llaves });
+      }
+      //////////////Flitrar por fecha actual/////////////////////////
+      else if (filtra == 'Today') {
+        tareas = [];
+        llaves = [];
+        this.state.tasks.forEach(element => {
+          if (element.date == fechaActual) {
+            tareas.push(element);
+          }
+        });
+        this.state.keys.forEach(element => {
+          if (element.date == fechaActual) {
+            llaves.push(element);
+          }
+        });
+        this.setState({ tasks: tareas });
+        this.setState({ keys: llaves });
+      }
+      ///////////////////////////////////
+      //Filtrar por este mes
+      else if (filtra == 'This Month') {
+        tareas = [];
+        llaves = [];
+        this.state.tasks.forEach(element => {
+          mes2 = element.date + "";
+          mes2 = mes2.substr(3, 2);
+          if (mes2 == mes1) {
+            tareas.push(element);
+          }
+        });
+        this.state.keys.forEach(element => {
+          mes2 = element.date + "";
+          mes2 = mes2.substr(3, 2);
+          if (mes2 == mes1) {
+            llaves.push(element);
+          }
+        });
+        this.setState({ tasks: tareas });
+        this.setState({ keys: llaves });
+      }
+  }
+
 
   componentDidMount() {
     const { currentUser } = fire.auth()
     this.setState({ currentUser })
+<<<<<<< HEAD
     
     db.ref('/tareas').on('value', snapshot => {
       let data = snapshot.val();
@@ -141,6 +232,44 @@ db.ref('/tareas/' + i + "/").update({
       });   
       
 
+=======
+  //  db.ref('/tareas').on('value', snapshot => {
+   //   Alert.alert("indicador");
+     //this.filtrando();
+
+  //  });
+
+    db.ref('/Filtro/estado').on('value', snapshot => {
+      Alert.alert("Indicador filtro");
+      let estado = snapshot.val();
+      let est = Object.values(estado) + '';
+      this.setState({ filtroActual: est });
+      db.ref('/tareas').on('value', snapshot => {
+        data = snapshot.val();
+        keys = Object.keys(data);
+        tasks = Object.values(data);
+        this.setState({ tasks });
+        this.setState({ keys: keys });
+      });
+      this.filtrando();
+     
+    });
+    //////////////////////////////////////////////////////
+
+
+    //   filtra = this.state.filtroActual;
+    //  db.ref('/tareas').on('value', snapshot => {
+    //  let data = snapshot.val();
+    //   let keys = Object.keys(data);
+    //    let tasks = Object.values(data);
+
+    //    if (filtra == 'All') {
+    //      this.setState({ tasks });
+    //      this.setState({ keys: keys });
+    //    }
+    //  });
+    // Alert.alert(currentUser.email + "");
+>>>>>>> 9e3e73e965b6966698bcb3ec4b47231c2d095599
   }
 
 
@@ -149,7 +278,8 @@ db.ref('/tareas/' + i + "/").update({
     console.disableYellowBox = true;
     return (
       <View
-        style={[styles.container, { paddingBottom: this.state.viewPadding }]}      >
+        style={[styles.container, { paddingBottom: this.state.viewPadding }]}>
+
         <FlatList style={styles.list}
           data={this.state.tasks}
           renderItem={({ item, index }) =>

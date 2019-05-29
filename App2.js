@@ -3,12 +3,14 @@ import {
   TouchableOpacity, Image, Button
 } from 'react-native';
 import { createStackNavigator, createAppContainer, createMaterialTopTabNavigator } from 'react-navigation';
+
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import SecondPage from './pages/SecondPage';
 import Guardando from './pages/FirstPage';
 import Loading from './pages/Loading';
 import MenuSesion from './components/menuSesion';
+import DropDown from './components/DropDown';
 //import App from './App';
 
 const TabScreen = createMaterialTopTabNavigator(
@@ -46,7 +48,11 @@ const AppNavigator = createStackNavigator({
   Registro: { screen: SignUp },
   Home: {
     screen: TabScreen,
-    navigationOptions: {
+    navigationOptions: 
+    {   
+      headerTitle: (
+        <DropDown></DropDown>
+      ),
       headerRight: (
         <MenuSesion></MenuSesion>
       ),
