@@ -44,7 +44,7 @@ let addItem = item => {
 };
 let editItem = item => {
   item.key
-  console.log('/tareas/' + item.key + "/");
+  
   db.ref('/tareas/' + item.key + "/").update({
     date: item.date,
     deadline: item.deadline,
@@ -88,23 +88,21 @@ export default class FirstPage extends Component {
       } else {
         editItem(this.state);
       }
-      this.setState({ text: "" });
-      this.setState({ modalVisible: false });
+     
+      this.setState({ text: "",modalVisible: false,ModalTitle: "Add To Do",text: "",date: fechaActual,  deadline: fechaActual, });
     }
   };
 
   addTaksModal = () => {
 
-    this.setState({ ModalTitle: "Add To Do" });
-    this.setState({ modalVisible: true });
+    this.setState({ ModalTitle: "Add To Do", modalVisible: true });
+ 
 
   }
   cancel = () => {
-    console.log("cancelar");
-    this.setState({ text: "" });
-    this.setState({ date: fechaActual });
-    this.setState({ deadline: fechaActual });
-    this.setState({ modalVisible: false });
+    
+    this.setState({ text: "",date: fechaActual,deadline: fechaActual,modalVisible: false,ModalTitle: "Add To Do"  });
+  
   }
 
 
@@ -115,12 +113,9 @@ export default class FirstPage extends Component {
 
   //Metodo para editar el contenido de card, la idea es hacerlo en un card
   editTask = (i, item) => {
-    this.setState({ key: i });
-    this.setState({ ModalTitle: "Edit To Do" });
-    this.setState({ text: item.description });
-    this.setState({ date: item.date });
-    this.setState({ deadline: item.deadline });
-    this.setState({ modalVisible: true });
+    
+    this.setState({ key: i ,ModalTitle: "Edit To Do",text: item.description,date: item.date,deadline: item.deadline,modalVisible: true });
+
 
 
   }
@@ -142,9 +137,8 @@ db.ref('/tareas/' + i + "/").update({
       let tasks = Object.values(data);
       this.setState({ tasks });
       this.setState({ keys: keys });
-      console.log(tasks);
+      
       });   
-      Alert.alert(currentUser.email+"");
       
 
   }
@@ -152,6 +146,7 @@ db.ref('/tareas/' + i + "/").update({
 
 
   render() {
+    console.disableYellowBox = true;
     return (
       <View
         style={[styles.container, { paddingBottom: this.state.viewPadding }]}      >
@@ -186,7 +181,7 @@ db.ref('/tareas/' + i + "/").update({
         <TextInput
           style={styles.textInput}
           onChangeText={this.changeTextHandler}
-          onSubmitEditing={this.addTask}
+          onSubmitEditing={this.SaveTask}
           value={this.state.text}
           placeholder="Add Task"
           returnKeyType="done"
@@ -212,7 +207,7 @@ db.ref('/tareas/' + i + "/").update({
                 mode="date" //The enum of date, datetime and time
                 placeholder="select date"
                 format="DD/MM/YYYY"
-                minDate={this.fechaActual}//Ejemplo "01-01-2019"                
+                minDate={fechaActual}//Ejemplo "01-01-2019"                
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 customStyles={{
@@ -236,7 +231,7 @@ db.ref('/tareas/' + i + "/").update({
                 mode="date" //The enum of date, datetime and time
                 placeholder="select date"
                 format="DD/MM/YYYY"
-                minDate={this.fechaActual}//Ejemplo "01-01-2019" 
+                minDate={this.state.date}//Ejemplo "01-01-2019" 
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 customStyles={{
