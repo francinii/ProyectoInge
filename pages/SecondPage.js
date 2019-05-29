@@ -120,10 +120,10 @@ export default class App extends Component {
             </View>
             <View style={{ flex: 0.2, justifyContent: 'flex-end', marginBottom: "1%", margin: "1%" }}>
               <View style={{ margin: "1%" }}>
-                <Button color="#87B56A" title="Agregar" onPress={this.toggleModal} />
+                <Button color="#87B56A" title="Agregar" onPress={this.toggleModal} color="#87B56A" />
               </View>
               <View style={{ margin: "1%" }}>
-                <Button color="#ff4040" title="Cerrar" onPress={this.toggleModal} />
+                <Button color="#ff4040" title="Cerrar" onPress={this.toggleModal} color="#87B56A" />
               </View>
             </View>
           </View>
