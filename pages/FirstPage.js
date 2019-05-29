@@ -119,7 +119,7 @@ export default class FirstPage extends Component {
 
   sendNotification() {
     PushNotification.localNotification({
-      message: 'Remember that you has To Do to do'
+      message: 'Remember that you have "To Do to do"'
     });
     Notificar=false;
   };
