@@ -3,7 +3,6 @@
 import React from 'react'
 import { StyleSheet, Text, TextInput, View, Button, Alert } from 'react-native'
 import { fire } from '../config';
-import { createStackNavigator } from 'react-navigation';
 
 
 class Login extends React.Component {
@@ -13,8 +12,8 @@ class Login extends React.Component {
     const { email, password } = this.state;
     fire.auth().signInWithEmailAndPassword(email, password)
       .then((user) => {
-        
-              this.props.navigation.navigate('Home');
+
+        this.props.navigation.navigate('Home');
       })
       .catch((error) => {
         const { code, message } = error;
@@ -33,6 +32,7 @@ class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        
         <Text>Login</Text>
         {this.state.errorMessage &&
           <Text style={{ color: 'red' }}>
@@ -41,7 +41,7 @@ class Login extends React.Component {
         <TextInput
           style={styles.textInput}
           autoCapitalize="none"
-          placeholder="Correo"
+          placeholder="Email"
           onChangeText={email => this.setState({ email })}
           value={this.state.email}
         />
@@ -49,17 +49,16 @@ class Login extends React.Component {
           secureTextEntry
           style={styles.textInput}
           autoCapitalize="none"
-          placeholder="Contraseña"
+          placeholder="Password"
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <Button title="Acceder" onPress={this.handleLogin} />
-        <Button
-          title="Registrarse"
-          onPress={() => this.props.navigation.navigate('Registro')}
-        />
+         <View style={{ flex: 0.2, justifyContent: 'flex-end', marginBottom: "1%", margin: 4, width:'90%' }}>
+        <Button title="Login" onPress={this.handleLogin} color="#87B56A"/>
+        <Button title="Sign up" onPress={() => this.props.navigation.navigate('Registro')} color="#87B56A"
+        /></View>
       </View>
-    )
+      )
   }
 }
 
@@ -78,5 +77,9 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     marginTop: 8
+  },
+  boton: {
+    width: '90%',
   }
+
 })

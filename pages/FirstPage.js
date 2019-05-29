@@ -317,15 +317,14 @@ export default class FirstPage extends Component {
 
         <Modal
           animationType="slide"
-
           visible={this.state.modalVisible}
           onRequestClose={() => { Alert.alert('Modal has been closed.'); }}>
           <View style={{ backgroundColor: '#f2f2f2', flex: 0.6 }}>
             <View style={{ backgroundColor: '#f2f2f2', flex: 0.9, padding: 1 }}>
               <Text style={styles.welcome}>{this.state.ModalTitle} </Text>
-              <Text>Date:</Text>
+              <Text style={{ fontSize: 17 }}>Date:</Text>
               <DatePicker
-                style={{ width: 200 }}
+                style={{ width: "100%" }}
                 date={this.state.date} //initial date from state
                 mode="date" //The enum of date, datetime and time
                 placeholder="select date"
@@ -341,15 +340,16 @@ export default class FirstPage extends Component {
                     marginLeft: 0
                   },
                   dateInput: {
-                    marginLeft: 36
+                    marginLeft: 36,
+                    marginRight: 36,
                   }
                 }}
                 onDateChange={(date) => { this.setState({ date: date }) }}
               />
 
-              <Text>Deadline:</Text>
+              <Text style={{ fontSize: 17 }}>Deadline:</Text>
               <DatePicker
-                style={{ width: 200 }}
+                style={{ width: "100%" }}
                 date={this.state.deadline} //initial date from state
                 mode="date" //The enum of date, datetime and time
                 placeholder="select date"
@@ -365,7 +365,8 @@ export default class FirstPage extends Component {
                     marginLeft: 0
                   },
                   dateInput: {
-                    marginLeft: 36
+                    marginLeft: 36,
+                    marginRight: 36,
                   }
                 }}
                 onDateChange={(deadline) => { this.setState({ deadline: deadline }) }}
@@ -373,18 +374,18 @@ export default class FirstPage extends Component {
               //se guarde al darle al btn gurardar
               />
 
-              <Text>Description:</Text>
+              <Text style={{ fontSize: 17,  }}>Description:</Text>
               <TextInput
-                style={{ backgroundColor: '#d3d3d3' }}
+                style={{ backgroundColor: "#f2f2f2" }}
                 multiline={true}
                 numberOfLines={4}
                 onChangeText={this.changeTextHandler}
                 value={this.state.text}
-                placeholder="Add Task"
+                placeholder="Add Task..."
                 returnKeyType="done"
                 returnKeyLabel="done"
               />
-              <View style={{ margin: "1%" }}>
+              <View style={{ margin: "1%" ,bottom: 0}}>
                 <Button
                   onPress={this.SaveTask}
                   title="Save"

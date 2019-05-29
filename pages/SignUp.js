@@ -36,7 +36,7 @@ render() {
             {this.state.errorMessage}
           </Text>}
         <TextInput
-          placeholder="Correo"
+          placeholder="Email"
           autoCapitalize="none"
           style={styles.textInput}
           onChangeText={email => this.setState({ email })}
@@ -50,11 +50,13 @@ render() {
           onChangeText={password => this.setState({ password })}
           value={this.state.password}
         />
-        <Button title="Registrarse" onPress={this.handleSignUp} />
+        <View style={{ flex: 0.2, justifyContent: 'flex-end', marginBottom: "1%", margin: 4, width:'90%' }}>
+        <Button title="Sign up" onPress={this.handleSignUp} color="#87B56A" />
         <Button
-          title="Acceder a tu cuenta"
+          title="Login" color="#87B56A"
           onPress={() => this.props.navigation.navigate('Acceder')}
-        />
+        /> 
+        </View>
       </View>
     )
   }
