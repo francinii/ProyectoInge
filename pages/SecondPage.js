@@ -261,7 +261,6 @@ export default class App extends Component {
             </View>
             <View style={{ flex: 0.2, justifyContent: 'flex-end', marginBottom: "1%", margin: "1%" }}>
               <View style={{ margin: "1%" }}>
-<<<<<<< HEAD
                 <Button color="#87B56A" title="Add" onPress={this.addTaksModal} />
               </View>
               <View style={{ margin: "1%" }}>
@@ -354,12 +353,6 @@ export default class App extends Component {
                   color="#ff4040"
                   accessibilityLabel="Cancel"
                 />
-=======
-                <Button color="#87B56A" title="Agregar" onPress={this.toggleModal} color="#87B56A" />
-              </View>
-              <View style={{ margin: "1%" }}>
-                <Button color="#ff4040" title="Cerrar" onPress={this.toggleModal} color="#87B56A" />
->>>>>>> e039898972188f4c8dd5c3617fec442faae61ae3
               </View>
 
             </View>
