@@ -138,7 +138,7 @@ export default class App extends Component {
   onDayPress(day) {
     ListaMarcada = new Array();
 
-    this.DaysMarked(this.state.tasks, day.dateString, this.state.keys);
+    this.DaysMarked(this.state.tasks, day.dateString, this.state.keys,this.state.currentUser);
     var diaSinFormato;
     var dia;
     diaSinFormato = day.dateString.split('-');
@@ -146,7 +146,7 @@ export default class App extends Component {
     this.setState({ Marcadostasks: ListaMarcada, FechaMarcada: dia, isModalVisible: true, dayMarked: day.dateString });
   }
 
-  DaysMarked = (tasks, day, keys) => {
+  DaysMarked = (tasks, day, keys,currentUser) => {
     ListaMarcada = new Array();
     KeysMarcada = new Array();
     var diaSinFormato;
@@ -162,7 +162,7 @@ export default class App extends Component {
         diaSinFormato[1] = '0' + diaSinFormato[1];
       }
       dia = diaSinFormato[2] + "-" + diaSinFormato[1] + "-" + diaSinFormato[0];
-      if (day == dia) {
+      if (day == dia && element.currentUser==currentUser.email) {
         KeysMarcada.push(keys[i]);
         ListaMarcada.push(element);
       }
@@ -193,7 +193,7 @@ export default class App extends Component {
 
       const markedDates2 = Object.assign({}, markedDays)
       if (this.state.dayMarked != '') {
-        this.DaysMarked(listTasks, this.state.dayMarked, keys);
+        this.DaysMarked(listTasks, this.state.dayMarked, keys,currentUser);
       }
       this.setState({
         markedDates: markedDates2, tasks: listTasks, keys: keys, currentUser: currentUser, Marcadostasks: ListaMarcada
@@ -329,7 +329,7 @@ export default class App extends Component {
 
               <Text>Description:</Text>
               <TextInput
-                style={{ backgroundColor: '#d3d3d3' }}
+                style={{ backgroundColor: '#f2f2f2' }}
                 multiline={true}
                 numberOfLines={4}
                 onChangeText={this.changeTextHandler}
